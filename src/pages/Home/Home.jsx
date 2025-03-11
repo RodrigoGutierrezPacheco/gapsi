@@ -20,7 +20,9 @@ export default function Home() {
         </p>
         <p>Navega por los productos y agrégalos al carrito.</p>
         <Link to="/productos">
-          <button className="btn btn-primary mt-3">Ver productos</button>
+          <button className="btn btn-primary mt-3">
+            <i className="fas fa-box-open"></i> Ver productos
+          </button>
         </Link>
       </div>
     </div>

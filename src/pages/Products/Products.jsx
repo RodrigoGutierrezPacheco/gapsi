@@ -62,17 +62,15 @@ export default function Products() {
     }
   };
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const scrollThreshold = 400;
     if (
-      window.innerHeight +
-        document.documentElement.scrollTop +
-        scrollThreshold >=
+      window.innerHeight + document.documentElement.scrollTop + scrollThreshold >=
       document.documentElement.offsetHeight
     ) {
       setPage((prevPage) => prevPage + 1);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isSearchTriggered && hasMore) {
@@ -85,7 +83,7 @@ export default function Products() {
       window.addEventListener("scroll", handleScroll);
     }
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isSearchTriggered, hasMore]);
+  }, [isSearchTriggered, handleScroll]);
 
   const filteredProducts = allProducts.filter(
     (product) =>
@@ -122,13 +120,30 @@ export default function Products() {
 
       <Grid container spacing={2} justifyContent="center" sx={{ mb: 4 }}>
         <Grid item xs={12} sm={8} md={6}>
-          <TextField
-            fullWidth
-            label="Buscar productos"
-            variant="outlined"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <div className="input-group">
+            <TextField
+              fullWidth
+              label="Buscar productos"
+              variant="outlined"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <i
+                    className="fa-solid fa-magnifying-glass"
+                    style={{ marginRight: "8px" }}
+                  ></i>
+                ),
+                endAdornment: searchQuery && (
+                  <i
+                    className="fa-solid fa-xmark"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setSearchQuery("")}
+                  ></i>
+                )
+              }}
+            />
+          </div>
         </Grid>
         <Grid
           item
