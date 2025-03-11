@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { getAllProducts } from "./../../services/products";
-import ProductCard from "../../components/Cards/productCard";
+import ProductCard from "../../components/Cards/ProductCard";
 import {
   Container,
   Grid,
@@ -30,7 +30,7 @@ export default function Products() {
       if (response.status === 200) {
         const newProducts =
           response.data.item.props.pageProps.initialData.searchResult
-            .itemStacks[0].items;
+            .itemStacks?.[0]?.items;
 
         if (newProducts.length === 0) {
           setHasMore(false);
@@ -68,23 +68,25 @@ export default function Products() {
       window.innerHeight + document.documentElement.scrollTop + scrollThreshold >=
       document.documentElement.offsetHeight
     ) {
-      setPage((prevPage) => prevPage + 1);
+      if (!isLoadingProds && hasMore) {
+        setPage((prevPage) => prevPage + 1);  
+      }
     }
-  }, []);
-
+  }, [isLoadingProds, hasMore]);
+  
   useEffect(() => {
-    if (isSearchTriggered && hasMore) {
-      fetchProducts();
+    if (isSearchTriggered && hasMore && !isLoadingProds) {
+      fetchProducts(); 
     }
-  }, [fetchProducts, isSearchTriggered, hasMore, page]);
-
+  }, [fetchProducts, isSearchTriggered, hasMore, page, isLoadingProds]);
+  
   useEffect(() => {
     if (isSearchTriggered) {
       window.addEventListener("scroll", handleScroll);
     }
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isSearchTriggered, handleScroll]);
-
+  
   const filteredProducts = allProducts.filter(
     (product) =>
       !cartItems.some((cartItem) => cartItem.id === product.id) && product.price
